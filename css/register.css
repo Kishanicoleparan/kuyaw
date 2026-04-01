@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #fff7f0;
+    color: #2b1d16;
+}
+
+/* NAVBAR */
+.navbar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 80px;
+    background: transparent;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #ff6a00;
+}
+
+nav a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #3a2a22;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #ff6a00;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+/* HERO BACKGROUND */
+.hero {
+    min-height: 100vh;
+    background:
+        linear-gradient(
+            to right,
+            rgba(255, 247, 240, 0.95) 35%,
+            rgba(255, 247, 240, 0.6) 60%,
+            rgba(255, 247, 240, 0.2) 100%
+        ),
+        url("../assets/images/car.jpg") center / cover no-repeat;
+
+    display: flex;
+    align-items: center;
+    padding-left: 100px;
+}
+
+/* REGISTER BOX */
+.auth-box {
+    background: #fff;
+    padding: 40px 45px;
+    border-radius: 25px;
+    width: 420px;
+    box-shadow: 0 30px 60px rgba(255, 106, 0, 0.25);
+}
+
+.auth-box h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.auth-box p {
+    color: #5a3e30;
+    margin-bottom: 25px;
+}
+
+/* INPUTS */
+.auth-box input {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 15px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 14px;
+}
+
+/* BUTTON */
+.auth-box button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 12px 25px rgba(255, 106, 0, 0.4);
+}
+
+.auth-box button:hover {
+    transform: translateY(-2px);
+}
+
+/* LINKS */
+.switch-link {
+    margin-top: 18px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.switch-link a {
+    color: #ff6a00;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ERROR */
+.error {
+    background: #ffe5e5;
+    color: #c0392b;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+}

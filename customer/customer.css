@@ -1,0 +1,69 @@
+/* Customer Page Custom Styling */
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    color: #2b1d16;
+}
+
+/* Card */
+.card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(255, 106, 0, 0.1);
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: #fff;
+    padding: 14px;
+    text-align: center;
+}
+
+tbody td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background: #fff5ec;
+}
+
+/* Status */
+.status.available {
+    background: #ffe7d6;
+    color: #ff6a00;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Rent Button */
+.rent-btn {
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.rent-btn:hover {
+    opacity: 0.85;
+}

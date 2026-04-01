@@ -1,0 +1,217 @@
+body {
+    background: #f8f9fa;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.page-content {
+    padding: 50px 80px;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.page-header h1 {
+    font-size: 36px;
+    color: #2b1d16;
+    margin: 0;
+}
+
+.add-btn {
+    background: #ff6a00;
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 106, 0, 0.3);
+}
+
+.add-btn:hover {
+    background: #e65a00;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 106, 0, 0.4);
+}
+
+/* --- BIGGER CAR GRID (4 Columns) --- */
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+
+/* --- BIGGER CAR CARD --- */
+.car-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.car-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    border-color: #ff6a00;
+}
+
+/* --- BIGGER CAR IMAGE BOX --- */
+.image-box {
+    width: 100%;
+    height: 280px; /* Much taller images */
+    overflow: hidden;
+    position: relative;
+    background: #f5f5f5;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.car-card:hover .image-box img {
+    transform: scale(1.12);
+}
+
+/* --- BIGGER PLACEHOLDER --- */
+.no-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    color: #adb5bd;
+    font-weight: 700;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- BIGGER CARD CONTENT --- */
+.car-details {
+    padding: 30px; /* More padding */
+    text-align: left;
+}
+
+.car-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.4rem; /* Bigger title */
+    color: #2c3e50;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.car-card .meta {
+    color: #7f8c8d;
+    font-size: 1rem; /* Bigger text */
+    margin: 6px 0;
+}
+
+.car-card .price {
+    color: #e74c3c;
+    font-weight: 900;
+    font-size: 1.6rem; /* Bigger price */
+    margin: 20px 0;
+    display: block;
+}
+
+/* --- BIGGER STATUS BADGE --- */
+.status {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+.status.available {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.status.rented {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* --- BIGGER ACTION BUTTONS --- */
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.actions a {
+    flex: 1;
+    display: inline-block;
+    padding: 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.actions .edit {
+    background: #3498db;
+}
+
+.actions .edit:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.actions .delete {
+    background: #e74c3c;
+}
+
+.actions .delete:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1400px) {
+    .car-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1000px) {
+    .car-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .car-grid { 
+        grid-template-columns: 1fr; 
+        gap: 30px;
+    }
+    .page-content {
+        padding: 30px 20px;
+    }
+    .image-box {
+        height: 220px;
+    }
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}

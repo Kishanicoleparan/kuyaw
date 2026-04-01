@@ -1,0 +1,83 @@
+/* URBAN DRIVE - PREMIUM EDIT FORM */
+
+/* Center everything and give it breathing room */
+.container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.page-header h2 {
+    color: #2b1d16;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.back-link {
+    color: #ff6a00;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* The White Card - This fixes the 'floating' look */
+.form-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    max-width: 500px; /* Limits width so it doesn't stretch across the screen */
+    margin: 0 auto;   /* Centers the card horizontally */
+}
+
+/* Force elements to stack vertically */
+.edit-customer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+/* Make inputs look modern and fit the card */
+.edit-customer-form label {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.edit-customer-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* Prevents input from overflowing the card */
+}
+
+/* Style the update button */
+.btn-submit {
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-submit:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
