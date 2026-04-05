@@ -10,7 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'customer') {
 
 $user_id = intval($_SESSION['id']); // Secure the ID
 
-// Fetch all bookings for this customer
+// Fetch all bookings for this customer (removed approved_by)
 $stmt = mysqli_prepare($conn, "
     SELECT b.booking_id, b.booking_date, b.return_date, b.status, b.total_price,
            b.payment_status, b.payment_method, b.payment_date,
@@ -55,8 +55,102 @@ $bookings = $result;
 .booking-info .brand { color:#7f8c8d; font-size:0.9rem; font-weight:600; text-transform:uppercase; margin-bottom:15px; }
 .booking-info .dates { color:#666; font-size:0.95rem; margin-bottom:15px; }
 
-/* Price & Status */
-.card-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0; }
+/* Price & Status Row */
+.card-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0; gap:10px; flex-wrap:wrap; }
+
+/* ===== BOOKING STATUS BADGES ===== */
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 100px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* PENDING - Yellow/Orange */
+.status-pending { 
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7); 
+    color: #856404; 
+    border: 1px solid #f0ad4e;
+    box-shadow: 0 2px 8px rgba(255,193,7,0.3);
+}
+.status-pending::before { content: "⏳"; }
+
+/* APPROVED - Green */
+.status-approved { 
+    background: linear-gradient(135deg, #d4edda, #a8e6cf); 
+    color: #155724; 
+    border: 1px solid #28a745;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+}
+.status-approved::before { content: "✅"; }
+
+/* COMPLETED - Blue */
+.status-completed { 
+    background: linear-gradient(135deg, #d1ecf1, #b8e6ff); 
+    color: #0c5460; 
+    border: 1px solid #17a2b8;
+    box-shadow: 0 2px 8px rgba(23,162,184,0.3);
+}
+.status-completed::before { content: "🏁"; }
+
+/* CANCELLED - Red */
+.status-cancelled { 
+    background: linear-gradient(135deg, #f8d7da, #ffccd5); 
+    color: #721c24; 
+    border: 1px solid #dc3545;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.3);
+}
+.status-cancelled::before { content: "❌"; }
+
+/* ===== PAYMENT STATUS BADGES ===== */
+.payment-badge {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.payment-paid { 
+    background: linear-gradient(135deg, #d4edda, #a8e6cf); 
+    color: #155724; 
+    border: 1px solid #28a745;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.4);
+}
+.payment-paid::before { content: "💳"; }
+
+.payment-pending { 
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7); 
+    color: #856404; 
+    border: 1px solid #f0ad4e;
+    box-shadow: 0 2px 8px rgba(255,193,7,0.3);
+}
+.payment-pending::before { content: "⏳"; }
+
+.payment-failed { 
+    background: linear-gradient(135deg, #f8d7da, #ffccd5); 
+    color: #721c24; 
+    border: 1px solid #dc3545;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.3);
+}
+.payment-failed::before { content: "⚠️"; }
+
+/* Price */
 .price { font-weight:800; color:#e74c3c; font-size:1.4rem; }
 
 /* Buttons */
@@ -74,7 +168,12 @@ $bookings = $result;
 /* Responsive */
 @media (max-width:1200px) { .bookings-grid{ grid-template-columns: repeat(3,1fr); } }
 @media (max-width:900px) { .bookings-grid{ grid-template-columns: repeat(2,1fr); } }
-@media (max-width:600px) { .bookings-grid{ grid-template-columns: 1fr; } .car-image{height:200px;} .page-title{text-align:center;} }
+@media (max-width:600px) { 
+    .bookings-grid{ grid-template-columns: 1fr; } 
+    .car-image{height:200px;} 
+    .page-title{text-align:center;} 
+    .card-meta { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
 </style>
 </head>
 <body>
@@ -97,7 +196,19 @@ $bookings = $result;
     <div class="empty">You have no bookings yet. <a href="available_cars.php" style="color:#ff6a00;">Browse available cars</a></div>
 <?php else: ?>
 <div class="bookings-grid">
-<?php while($b = mysqli_fetch_assoc($bookings)): ?>
+<?php while($b = mysqli_fetch_assoc($bookings)): 
+    $booking_status = strtolower($b['status']);
+    $payment_status = strtolower($b['payment_status']);
+    
+    // Status text mapping
+    $status_labels = [
+        'pending' => 'Pending',
+        'approved' => 'Approved',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled'
+    ];
+    $status_text = $status_labels[$booking_status] ?? ucfirst($booking_status);
+?>
 
 <div class="booking-card">
     <div class="car-image">
@@ -115,41 +226,40 @@ $bookings = $result;
 
         <div class="card-meta">
             <div class="price">₱<?= number_format($b['total_price'],2) ?></div>
-            <div>
-                <?php
-                $paymentStatus = strtolower($b['payment_status']);
-                if($paymentStatus == 'paid'){
-                    echo "<span style='color:green;font-weight:bold;'>PAID</span>";
-                } elseif($paymentStatus == 'pending') {
-                    echo "<span style='color:red;font-weight:bold;'>UNPAID</span>";
-                } else {
-                    echo "<span style='color:orange;font-weight:bold;'>".htmlspecialchars($b['payment_status'])."</span>";
-                }
-                ?>
-            </div>
+            
+            <!-- BOOKING STATUS BADGE -->
+            <span class="status-badge status-<?= $booking_status ?>">
+                <?= $status_text ?>
+            </span>
+            
+            <!-- PAYMENT STATUS BADGE -->
+            <span class="payment-badge payment-<?= $payment_status ?>">
+                <?= ucfirst($payment_status) ?>
+            </span>
         </div>
 
         <div class="booking-actions">
-    <?php if($paymentStatus == 'pending'): ?>
-        <?php if($b['status'] == 'Pending' || $b['status'] == 'Approved'): ?>
-            <a href="paymongo_payment.php?booking_id=<?= $b['booking_id'] ?>" class="action-btn btn-pay">Pay Now</a>
-            <?php if($b['status']=='Pending'): ?>
-                <a href="cancel_booking.php?id=<?= $b['booking_id'] ?>" class="action-btn btn-cancel" onclick="return confirm('Cancel this booking?')">Cancel</a>
+            <?php if($payment_status == 'pending'): ?>
+                <?php if($b['status'] == 'Pending' || $b['status'] == 'Approved'): ?>
+                    <a href="paymongo_payment.php?booking_id=<?= $b['booking_id'] ?>" class="action-btn btn-pay">💳 Pay Now</a>
+                    <?php if($b['status'] == 'Pending'): ?>
+                        <a href="cancel_booking.php?id=<?= $b['booking_id'] ?>" class="action-btn btn-cancel" onclick="return confirm('Cancel this booking?')">❌ Cancel</a>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php elseif($payment_status == 'paid'): ?>
+                <a href="payment_receipt.php?booking_id=<?= $b['booking_id'] ?>" class="action-btn btn-receipt">📄 View Receipt</a>
             <?php endif; ?>
-        <?php endif; ?>
-            <?php elseif($paymentStatus=='paid'): ?>
-                <a href="payment_receipt.php?booking_id=<?= $b['booking_id'] ?>" class="action-btn btn-receipt">View Receipt</a>
-            <?php endif; ?>
-            <?php if(isset($_GET['msg']) && $_GET['msg'] == 'paid'): ?>
-    <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        Payment received! Your booking is now confirmed.
-    </div>
-<?php endif; ?>
         </div>
     </div>
 </div>
 
 <?php endwhile; ?>
+</div>
+<?php endif; ?>
+
+<?php if(isset($_GET['msg']) && $_GET['msg'] == 'paid'): ?>
+<div style="background: linear-gradient(135deg, #d4edda, #a8e6cf); color: #155724; padding: 20px; border-radius: 16px; margin: 20px 0; border-left: 5px solid #28a745; box-shadow: 0 4px 15px rgba(40,167,69,0.2);">
+    <strong>✅ Payment Successful!</strong> Your booking is now confirmed.
 </div>
 <?php endif; ?>
 

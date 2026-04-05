@@ -68,7 +68,6 @@ tr:hover { background: #fff3ea; }
         <a href="bookings.php">Bookings</a>
         <a href="customers.php">Customers</a>
         <a href="profile_admin.php">Profile</a>
-        <a href="settings.php">Settings</a>
         <a href="logout.php" class="logout-btn">Logout</a>
     </nav>
 </header>

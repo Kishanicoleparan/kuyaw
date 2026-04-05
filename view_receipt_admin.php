@@ -1,18 +1,22 @@
 <?php
 session_start();
-require_once "../db.php";
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    header("Location: login.php");
+    exit();
+}
 
-$booking_id = intval($_GET['booking_id'] ?? 0);
-$user_id = intval($_SESSION['id'] ?? 0);
+require_once "db.php";
+
+$booking_id = intval($_GET['id'] ?? 0);
 
 $stmt = mysqli_prepare($conn, "
-    SELECT b.*, c.car_name, c.brand, c.price_per_day, u.name as customer_name, c.car_image
+    SELECT b.*, c.car_name, c.brand, c.price_per_day, u.name as customer_name, u.email, u.phone, c.car_image
     FROM bookings b 
     JOIN cars c ON b.car_id = c.car_id 
     JOIN users u ON b.id = u.id 
-    WHERE b.booking_id = ? AND b.id = ?
+    WHERE b.booking_id = ?
 ");
-mysqli_stmt_bind_param($stmt, "ii", $booking_id, $user_id);
+mysqli_stmt_bind_param($stmt, "i", $booking_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $booking = mysqli_fetch_assoc($result);
@@ -31,8 +35,8 @@ function safeDate($date) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Receipt #<?= $booking_id ?> | UrbanDrive</title>
-    <link rel="stylesheet" href="../adashboard.css">
+    <title>Receipt #<?= $booking_id ?> | UrbanDrive Admin</title>
+    <link rel="stylesheet" href="adashboard.css">
     <style>
         .page-content { max-width: 900px; margin: 40px auto; padding: 0 30px; }
         .page-title { 
@@ -207,15 +211,17 @@ function safeDate($date) {
 </head>
 <body>
 
-<!-- HEADER - SAME AS my_bookings.php -->
+<!-- ADMIN HEADER -->
 <header class="admin-header">
-    <div class="logo">Urban<span>Drive</span></div>
+    <div class="logo">Urban<span>Drive</span> Admin</div>
     <nav>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="my_bookings.php" class="active">My Bookings</a>
-        <a href="available_cars.php">Available Cars</a>
-        <a href="profile.php">Profile</a>
-        <a href="../logout.php" class="logout-btn">Logout</a>
+        <a href="reports.php">Dashboard</a>
+        <a href="bookings.php" class="active">Bookings</a>
+        <a href="addcar.php">Add Car</a>
+        <a href="viewcar.php">View Cars</a>
+        <a href="customers.php">Customers</a>
+        <a href="profile_admin.php">Profile</a>
+        <a href="logout.php" class="logout-btn">Logout</a>
     </nav>
 </header>
 
@@ -227,7 +233,7 @@ function safeDate($date) {
         <div class="receipt-header">
             <div class="receipt-title">🏎️ Car Rental Receipt</div>
             <div class="receipt-number">Receipt #<?= $booking_id ?></div>
-            <div class="issued-date">Issued: <?= date('F j, Y g:i A') ?></div>
+            <div class="issued-date">Issued: <?= date('F j, Y g:i A') ?> | Admin View</div>
         </div>
         
         <!-- Details -->
@@ -237,6 +243,14 @@ function safeDate($date) {
                 <div class="detail-item">
                     <span class="detail-label">Full Name:</span>
                     <span class="detail-value"><?= htmlspecialchars($booking['customer_name'] ?? 'N/A') ?></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value"><?= htmlspecialchars($booking['email'] ?? 'N/A') ?></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value"><?= htmlspecialchars($booking['phone'] ?? 'N/A') ?></span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Booking ID:</span>
@@ -253,7 +267,7 @@ function safeDate($date) {
             </div>
             
             <div class="detail-section">
-                <h3>🚗 Vehicle Details</h3>
+                <h3>🚗 Vehicle & Payment Details</h3>
                 <div class="detail-item">
                     <span class="detail-label">Car Model:</span>
                     <span class="detail-value"><?= htmlspecialchars($booking['car_name'] ?? 'N/A') ?></span>
@@ -270,6 +284,14 @@ function safeDate($date) {
                     <span class="detail-label">Payment Method:</span>
                     <span class="detail-value"><?= htmlspecialchars($booking['payment_method'] ?? 'N/A') ?></span>
                 </div>
+                <div class="detail-item">
+                    <span class="detail-label">Payment Status:</span>
+                    <span class="detail-value" style="color: #27ae60; font-weight: 800;">PAID ✓</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Booking Status:</span>
+                    <span class="detail-value"><?= htmlspecialchars($booking['status'] ?? 'N/A') ?></span>
+                </div>
             </div>
         </div>
         
@@ -280,10 +302,11 @@ function safeDate($date) {
             <div class="status-paid">PAID & CONFIRMED ✓</div>
         </div>
         
-        <!-- Buttons -->
+        <!-- Admin Action Buttons -->
         <div class="action-buttons no-print">
             <button class="btn btn-print" onclick="window.print()">🖨️ Print Receipt</button>
-            <a href="my_bookings.php" class="btn btn-back">← Back to My Bookings</a>
+            <a href="bookings.php" class="btn btn-back">← Back to All Bookings</a>
+            <a href="edit_booking.php?id=<?= $booking_id ?>" class="btn" style="background: linear-gradient(135deg, #ff6a00, #ff914d); color: white;">✏️ Edit Booking</a>
         </div>
     </div>
 </div>

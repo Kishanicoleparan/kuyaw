@@ -215,7 +215,6 @@ body{
         <a href="bookings.php">Bookings</a>
         <a href="customers.php">Customers</a>
         <a href="profile_admin.php" class="active">Profile</a>
-        <a href="settings.php">Settings</a>
         <a class="logout-btn" href="logout.php">Logout</a>
 </nav>
 </header>

@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 include 'db.php';
 
-$id = $_GET['id'];
+$id = intval($_GET['id']); // Secure ID
 $car_query = mysqli_query($conn, "SELECT * FROM cars WHERE car_id=$id");
 $car = mysqli_fetch_assoc($car_query);
 
@@ -46,58 +46,211 @@ if (isset($_POST['update'])) {
 <head>
 <meta charset="UTF-8">
 <title>Edit Car | UrbanDrive Admin</title>
-<link rel="stylesheet" href="addacar.css">
+<link rel="stylesheet" href="adashboard.css">
 <style>
-/* Custom Plus Button File Upload */
-.file-upload-wrapper {
-    position: relative;
-    margin-bottom: 20px;
+body {
+    background: #f8f9fa;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.file-upload-label {
+.page-content {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 40px 30px;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.back-link {
+    text-decoration: none;
+    background: white;
+    color: #1a1a2e;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+.back-link:hover {
+    background: #ff6a00;
+    color: white;
+}
+
+/* Form + Plus Button Layout */
+.form-card-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Form Card */
+.form-card {
+    flex: 1;
+    background: white;
+    padding: 60px 50px;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+    border: 1px solid #eee;
+}
+
+.form-header h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+.form-header p {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1a1a2e;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 18px 22px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    font-size: 16px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #ff6a00;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255,106,0,0.15);
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff6a00, #ff914d);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255,106,0,0.4);
+}
+
+/* Plus Button on Right (Large Square) */
+.plus-button-wrapper {
+    flex-shrink: 0;
+    width: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 45px;
-    border: 2px dashed #3498db;
-    border-radius: 8px;
+    padding: 50px;
     background: #f8f9fa;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+    transition: transform 0.3s ease;
 }
 
-.file-upload-label:hover {
-    border-color: #2980b9;
-    background: #e9ecef;
-}
-
-.file-upload-label .plus-icon {
-    font-size: 24px;
+.plus-button {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    background: white;
+    border: 4px dashed #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
     color: #3498db;
-    font-weight: 300;
-    margin-right: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
     transition: all 0.3s ease;
 }
 
-.file-upload-label:hover .plus-icon {
-    color: #2980b9;
-    transform: rotate(90deg);
+.plus-button img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    display: <?= $car['car_image'] && file_exists('../uploads/'.$car['car_image']) ? 'block' : 'none' ?>;
+    transition: transform 0.3s ease;
 }
 
-.file-upload-label span {
-    font-size: 14px;
-    color: #6c757d;
-    font-weight: 500;
+.plus-button::before {
+    content: '+';
+    font-size: 80px;
+    color: #3498db;
+    font-weight: bold;
+    position: absolute;
+    z-index: 2;
+    <?= $car['car_image'] && file_exists('../uploads/'.$car['car_image']) ? 'opacity: 0;' : '' ?>
 }
 
+/* Hover Effects */
+.plus-button-wrapper:hover .plus-button {
+    transform: scale(1.05);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+}
+.plus-button:hover {
+    border-color: #2980b9;
+}
 .file-upload-input {
     display: none;
 }
 
-/* Hide the original file input */
-input[type="file"] {
-    display: none;
+/* Responsive */
+@media (max-width: 1000px) {
+    .form-card-wrapper {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .plus-button-wrapper {
+        width: 100%;
+    }
+    .plus-button {
+        height: 0;
+        padding-bottom: 100%;
+        font-size: 48px;
+    }
+    .plus-button::before {
+        font-size: 48px;
+    }
 }
 </style>
 </head>
@@ -106,53 +259,64 @@ input[type="file"] {
 <header class="admin-header">
     <div class="logo">Urban<span>Drive</span> Admin</div>
     <nav>
-        <a href="reports.php" class="active">Dashboard</a>
+        <a href="reports.php">Dashboard</a>
         <a href="addcar.php">Add Car</a>
-        <a href="viewcar.php">View Cars</a>
+        <a href="viewcar.php" class="active">View Cars</a>
         <a href="bookings.php">Bookings</a>
         <a href="customers.php">Customers</a>
         <a href="profile_admin.php">Profile</a>
-        <a href="settings.php">Settings</a>
-        <a class="logout" href="logout.php">Logout</a>
+        <a href="logout.php" class="logout-btn">Logout</a>
     </nav>
 </header>
 
-<main class="content">
-    <h1>Edit Car</h1>
+<main class="page-content">
+    <div class="page-header">
+        <h1>Edit Car</h1>
+        <a href="viewcar.php" class="back-link">← Back to Cars</a>
+    </div>
 
-    <div class="addcar-wrapper">
-        <!-- LEFT FORM -->
-        <form class="car-form" method="post" enctype="multipart/form-data">
-            <label>Model</label>
-            <input type="text" name="car_name" value="<?= htmlspecialchars($car['car_name']) ?>" required>
-
-            <label>Brand</label>
-            <input type="text" name="brand" value="<?= htmlspecialchars($car['brand']) ?>" required>
-
-            <label>Price Per Day</label>
-            <input type="number" step="0.01" name="price" value="<?= $car['price_per_day'] ?>" required>
-
-            <label>Status</label>
-            <select name="status">
-                <option value="Available" <?= $car['status']=="Available"?"selected":"" ?>>Available</option>
-                <option value="Rented" <?= $car['status']=="Rented"?"selected":"" ?>>Rented</option>
-            </select>
-
-            <label>Car Image</label>
-            <div class="file-upload-wrapper">
-                <label for="car_image" class="file-upload-label">
-                    <span class="plus-icon">+</span>
-                    <span id="file-label-text">Choose File</span>
-                </label>
-                <input type="file" name="car_image" id="car_image" class="file-upload-input" accept="image/*" onchange="previewImage(event)">
+    <div class="form-card-wrapper">
+        <!-- FORM LEFT -->
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Update Car Details</h2>
+                <p>Modify the car information below</p>
             </div>
 
-            <button type="submit" name="update">Update Car</button>
-        </form>
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="car_name">Car Model</label>
+                    <input type="text" name="car_name" id="car_name" value="<?= htmlspecialchars($car['car_name']) ?>" required>
+                </div>
 
-        <!-- RIGHT IMAGE PREVIEW -->
-        <div class="image-preview">
-            <img id="preview" src="<?= $car['car_image'] && file_exists('../uploads/'.$car['car_image']) ? '../uploads/'.$car['car_image'] : '../assets/car-placeholder.png' ?>" alt="Car Preview">
+                <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <input type="text" name="brand" id="brand" value="<?= htmlspecialchars($car['brand']) ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price Per Day (₱)</label>
+                    <input type="number" name="price" id="price" step="0.01" value="<?= $car['price_per_day'] ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="Available" <?= $car['status']=="Available" ? "selected" : "" ?>>Available</option>
+                        <option value="Rented" <?= $car['status']=="Rented" ? "selected" : "" ?>>Rented</option>
+                    </select>
+                </div>
+
+                <button type="submit" name="update" class="btn-submit">Update Car</button>
+            </form>
+        </div>
+
+        <!-- PLUS BUTTON RIGHT (Shows Current Image or +) -->
+        <div class="plus-button-wrapper">
+            <label class="plus-button" id="plusButton">
+                <img id="previewImg" src="<?= $car['car_image'] && file_exists('../uploads/'.$car['car_image']) ? '../uploads/'.$car['car_image'] : '' ?>" alt="Car Preview">
+                <input type="file" name="car_image" class="file-upload-input" id="fileInput" accept="image/*">
+            </label>
         </div>
     </div>
 </main>
@@ -162,16 +326,19 @@ input[type="file"] {
 </footer>
 
 <script>
-function previewImage(event) {
-    const img = document.getElementById('preview');
-    const file = event.target.files[0];
-    const label = document.getElementById('file-label-text');
-    
+// Show uploaded image in plus button
+const fileInput = document.getElementById('fileInput');
+const previewImg = document.getElementById('previewImg');
+const plusButton = document.getElementById('plusButton');
+
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
     if (file) {
-        img.src = URL.createObjectURL(file);
-        label.textContent = file.name;
+        previewImg.src = URL.createObjectURL(file);
+        previewImg.style.display = 'block';
+        plusButton.style.fontSize = '0'; // hide plus sign
     }
-}
+});
 </script>
 
 </body>

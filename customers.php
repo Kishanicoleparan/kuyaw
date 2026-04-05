@@ -167,7 +167,6 @@ tr:hover {
         <a href="bookings.php">Bookings</a>
         <a href="customers.php" class="active">Customers</a>
         <a href="profile_admin.php">Profile</a>
-        <a href="settings.php">Settings</a>
         <a href="logout.php" class="logout">Logout</a>
     </nav>
 </header>
